@@ -1,0 +1,112 @@
+#! /usr/bin/ruby
+
+module Scrooge
+  extend self
+
+  WHITE="\033[37m"
+  DARK_GRAY="\033[30m"
+  LIGHT_BLUE="\033[34m"
+  LIGHT_GREEN="\033[32m"
+  LIGHT_CYAN="\033[36m"
+  LIGHT_RED="\033[31m"
+  LIGHT_PURPLE="\033[35m"
+  YELLOW="\033[33m"
+  BLACK="\033[30m"
+  BLUE="\033[34m"
+  GREEN="\033[32m"
+  CYAN="\033[36m"
+  RED="\033[31m"
+  PURPLE="\033[35m"
+  BROWN="\033[33m"
+  LIGHT_GRAY="\033[37m"
+
+  def mcduck
+    hat_top = BLUE
+    hat_rim = BLUE
+    hat_inner = WHITE
+    eye = WHITE
+    eyeball = GREEN
+    feather = WHITE
+    beak = YELLOW
+    speech = GREEN
+    text = WHITE
+
+    <<-SCROOGE
+                     #{hat_top}$$$$$$$$$$$$$$$$$$$$$$
+                   $$$$$$$$$$$$$$$$$$$$$$$$
+                 $$$$    $$$$$$$$$$$$$$$$$$$$
+                $$$$$     $$$$$$$$$$$$$$$$$$$
+              $$$$$$$$     $$$$$$$$$$$$$$$$$$
+            $$$$$$$$$$$     $$$$$$$$$$$$$$$
+           $$$$$$$$$$$$$     $$$$$$$$$$$$$$
+          $$$$$$$$$$$$$$$     $$$$$$$$$$$$$
+            $$$$$$$$$$$$$$    $$$$$$$$$$$$$
+              $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                $$$$$$$$$$$$$$$$$$$$$$$$$$$      #{hat_rim}$$$$$$
+                 #{hat_top}$$$$$$$$$$$$          $$$$   #{hat_rim}$$$$   $$$
+                #{hat_top}$$$$$$$                  $$    #{hat_rim}$$$$    $$$
+           #{hat_rim}$$$$$$$$$$$$$$$$$$          $$$$$$$$   $$$$  $
+        $$$$               $$$$$$$$$$$$$       $$$$$$$$$$
+      $$$$    #{hat_inner}$$$$$$$$$$                   $$$$$$$$$$$$
+      #{hat_rim}$$   #{hat_inner}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$
+     #{hat_rim}$  #{hat_inner}$$$$$$$$$$$$$$$$$$$$$                   $$$$$$
+     #{hat_rim}$  #{hat_inner}$$$$$$$$$$$$$$$$$                       $$$$
+     #{hat_rim}$  #{hat_inner}$$$$$$$$$$$$$$                       #{eye}$$$$$
+      #{hat_rim}$$  #{hat_inner}$$$$$$$$$$           #{eye}$$$$$       $$$    $$    #{speech_bubble_line_1}
+        #{hat_inner}$$$$$$$$$$$$         #{eye}$$$   $$$     $$$    $$   #{speech_bubble_line_2}
+          #{hat_inner}$$$$$$$$           #{eye}$      $$$$     $      $$#{speech_bubble_line_3}
+         #{feather}$$  #{hat_inner}$$$$$           #{eye}$        $      $#{eyeball}$$$   #{eye}$$ #{speech_bubble_line_4}
+           #{feather}$$  #{hat_inner}$$$  #{feather}$$$$     #{eye}$        $$$    $#{eyeball}$$$$  #{eye}$$ #{beak}$$$$
+        #{feather}$$$$$$$   $$         #{eye}$  #{eyeball}$$$$  #{eye}$$$    $#{eyeball}$$$$  #{eye}$$#{beak}$$   $$
+      #{feather}$$$       $$$   #{beak}$$$    #{eye}$#{eyeball}$$$$$$$  #{eye}$$  $$$#{eyeball}$$$$  #{eye}$$#{beak}$    $$
+      #{feather}$$   $$   $$  #{beak}$$$$$$$  #{eye}$#{eyeball}$$$$$$$$ #{eye}$$$$$$$$$$$$$$$#{beak}$    $$
+      #{feather}$$ $$$        #{beak}$$   $$  #{eye}$#{eyeball}$$$$$$$$   #{eye}$$     $$    #{beak}$$$$$$$$$
+       #{feather}$$$$  $$     #{beak}$$   $$    #{eye}$#{eyeball}$$$$$$ #{eye}$$$$     #{beak}$$$$$$$$$     $$
+       #{feather}$$$ $$   $$$$#{beak}$$ $$$$$$   #{eye}$$$$$$$$$$#{beak}$$$ #{beak}$$$$$$$    $$$  $$
+       #{feather}$$  $$  $$$$$#{beak}$$ $$$ $$$$$$$$$$$$$$$$$$$$$      $$$   $$$$
+        #{feather}$$$$$$$$    #{beak}$$$$ $$  $$$$$$$$$$$          $$$$ $$$$$$$
+                    $$$$   $$                   $$$$$$$$$
+                      $$$   $$$$$            $$$$$$$ $$$
+                       $$$$  $$$$$$$     $$$$$$$$$$$$$
+                        $$$$$   $$$$$$$$$$$$$$$$$$  $$
+                         $$$$$$   $$$$$$$$$$$$$$  $$
+                           $$$$$     $$$$$$$$$$$  $$
+                             $$$$$$$        $$$$$$$$
+                               $$$$$$$$$$$$$$$$ $$
+                                 $$$$$$$$$$$$
+    SCROOGE
+  end
+
+  private
+
+  def text
+    ARGV.first
+  end
+
+  def has_text?
+    text && !text.length.zero?
+  end
+
+  def padding
+    ' ' * 5
+  end
+
+  def speech_bubble_line_1
+    padding + '_' * text.length if has_text?
+  end
+
+  def speech_bubble_line_2
+    "#{padding}/" + (' ' * text.length) + '\\' if has_text?
+  end
+
+  def speech_bubble_line_3
+    "#{padding}< #{text} |" if has_text?
+  end
+
+  def speech_bubble_line_4
+    "#{padding}\\"+ ('_' * text.length) + '/' if has_text?
+  end
+end
+
+puts Scrooge.mcduck
+

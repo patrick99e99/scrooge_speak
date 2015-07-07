@@ -3,6 +3,9 @@
 module Scrooge
   extend self
 
+  LAST_WORDS_FILE = File.join File.expand_path(File.dirname(__FILE__)), 'last-words.mcduck'
+  VOICES = [:oliver, :duncan, :ralph]
+
   BLACK="\033[0;30m"
   RED="\033[0;31m"
   GREEN="\033[0;32m"
@@ -78,19 +81,39 @@ module Scrooge
   end
 
   def speak
-    system `say -v Oliver #{text}`
+    voice = find_in_voices
+    words = file_name
+    File.open(LAST_WORDS_FILE, 'w') { |f| f.write(words) }
+    system `say -v "#{voice}" #{cleaned_up(words)}`
+  end
+
+  def cleaned_up(words)
+    words.gsub('"', '').gsub("'", '').gsub('!', '').gsub('_', ' ').gsub("\n", '')
+  end
+
+  def find_in_voices
+    `say -v \? | awk -F'  ' '{$1 = tolower($1)}; $1 ~ #{voices_as_regex} {print $1; exit}'`.chomp
+  end
+
+  def voices_as_regex
+    '/' + VOICES.map(&:to_s).join('|') + '/'
+  end
+
+  def file_name
+    return unless text
+    matches = text.match(/([^\/]+)\.\w+/)
+    matches && matches.captures ? matches.captures.last : text
+  end
+
+  def already_spoke?
+    return false unless File.exists?(LAST_WORDS_FILE)
+    File.read(LAST_WORDS_FILE) == file_name
   end
 
   private
 
   def text
-    @text ||= filtered_text(ARGV.first) || random_text
-  end
-
-  def filtered_text(text)
-    return unless text
-    matches = text.match(/([^-]+)/)
-    matches.captures.first if matches.captures
+    @text ||= ARGV.first || random_text
   end
 
   def has_text?
@@ -119,24 +142,24 @@ module Scrooge
 
   def random_text
     [
-      'a penny saved is a penny earned',
-      'the beagle boys are after me number one dime',
-      'Magica DeSpell, I should have known youd be behind this!',
-      'i am smarter than the smarties and tougher than the toughies',
-      'boys, how are you going to profit if your operative costs are so high?',
-      'im scrooge mcduck',
-      'GAH! Me money!',
-      'Curse me kilts! Me money bin alarm! Quick, Duckworth, get the limo!',
-      'Not the Beagle Boys again... if the think they can get between Scrooge McDuck and his three cubic acres of cash, theyve got another thing coming',
-      'Curse me kilts! One false move, and Im a roast duck!',
-      'Launchpad, were you dropped on your head much as a child?',
-      'I can feel all those diamonds singing to me. And its a right pretty song, too!',
-      'Heavenly heather! The genie in the magic lamp! The fortunes I could own! I could have the worlds biggest diamond! No! The worlds biggest diamond mine! No-no! All the diamond mines! No! The entire mining industry! Yes, yes, yes! I can see that this is going to take some careful thought.',
-      'Here I sit in this big lonely dump, waiting for Christmas to pass! Bah! That silly season when everybody loves everybody else! A Curse on it! Me — Im different! Everybody hates me, and I hate everybody!',
+      "a penny saved is a penny earned",
+      "the beagle boys are after me number one dime",
+      "Magica DeSpell, I should have known youd be behind this!",
+      "i am smarter than the smarties and tougher than the toughies",
+      "boys, how are you going to profit if your operative costs are so high?",
+      "i'm scrooge mcduck and I can buy this place and shut it down",
+      "i'm scrooge mcduck",
+      "GAH! Me money!",
+      "Curse me kilts! Me money bin alarm! Quick, Duckworth, get the limo!",
+      "Not the Beagle Boys again... if the think they can get between Scrooge McDuck and his three cubic acres of cash, they've got another thing coming",
+      "Curse me kilts! One false move, and i'm a roast duck!",
+      "Launchpad, were you dropped on your head much as a child?",
+      "I can feel all those diamonds singing to me. And it's a right pretty song, too!",
+      "Heavenly heather! The genie in the magic lamp! The fortunes I could own!\nI could have the worlds biggest diamond! No! The worlds biggest diamond mine! No-no!\nAll the diamond mines! No! The entire mining industry! Yes, yes, yes!\nI can see that this is going to take some careful thought.",
     ].sample
   end
 end
 
 puts Scrooge.mcduck
-Scrooge.speak
+Scrooge.speak unless Scrooge.already_spoke?
 

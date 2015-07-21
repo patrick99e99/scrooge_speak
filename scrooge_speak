@@ -84,7 +84,11 @@ module Scrooge
     voice = find_in_voices
     words = file_name
     File.open(LAST_WORDS_FILE, 'w') { |f| f.write(words) }
-    system `say -v "#{voice}" #{cleaned_up(words)}`
+    system 'say -v "' + voice + '" "' + prefix + cleaned_up(words) + '" &'
+  end
+
+  def prefix
+    flags =~ /t/i ? 'Im Scrooge mick duck. running '  : ''
   end
 
   def cleaned_up(words)
@@ -112,8 +116,15 @@ module Scrooge
 
   private
 
+  def flags
+    ARGV.first if ARGV.first && ARGV.first[0] == '-'
+  end
+
   def text
-    @text ||= ARGV.first || random_text
+    @text ||= begin
+      text = (flags ? ARGV[1..-1] : ARGV).join(' ')
+      text.length.zero? ? random_text : text
+    end
   end
 
   def has_text?
